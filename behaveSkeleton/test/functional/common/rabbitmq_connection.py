@@ -1,35 +1,34 @@
 import logging
 import pika
 from behave import fixture
+import pika.exceptions
 
-connection_params = pika.ConnectionParameters('localhost', 8080, pika.PlainCredentials('user', 'password'))
-
-connection = pika.BlockingConnection(connection_params)
 
 
 def connect_to_rabbit():
+
+    connection_params = pika.ConnectionParameters('rabbitmq', 5672, '/')
+
+    connection = pika.BlockingConnection(connection_params)
+
+    channel = connection.channel()
+
+    return channel
+
    
-   connection = connection.channel()
+def rabbit_publish(channel, message=None):
 
-   if connection == True:
-    return "connected"
-   else:
-    return connection
+    channel.queue_declare(queue='output')
 
-def rabbit_publish(connection):
-
-    connection.queue_declare(queue='output')
-
-
-    connection.basic_publish(exchange='', routing_key='output', body='Hello RabbitMQ!')
+    channel.basic_publish(exchange='', routing_key='output', body=message)
 
     print("Sent 'Hello RabbitMQ!'")
 
-    return f'published message'
+    return channel
 
-def close_rabbit_connection():
+def close_rabbit_connection(channel):
 
-    connection.close()
+    channel.close()
 
 
 @fixture
