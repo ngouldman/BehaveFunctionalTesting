@@ -4,29 +4,20 @@ services:
     image: rabbitmq:management
     container_name: rabbitmq
     ports:
-      - "8080:5672"
+      - "5672:5672"
       - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: guest  # Set default username
-      RABBITMQ_DEFAULT_PASS: guest  # Set default password
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - services
 
   ft:
     container_name: FT
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     build:
       context: .
     command: behave test/functional/features
-    networks:
-      - services
-      
-networks: 
-  services:
    
