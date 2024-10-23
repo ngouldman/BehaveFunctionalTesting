@@ -18,13 +18,13 @@ def connect_to_rabbit():
    
 def rabbit_publish(channel, message=None):
 
-    channel.queue_declare(queue='output')
+    channel.queue_declare(queue='normaliser')
 
-    channel.basic_publish(exchange='', routing_key='output', body=message)
-
-    print("Sent 'Hello RabbitMQ!'")
+    channel.basic_publish(exchange='inbound', routing_key='output', body=message)
 
     return channel
+
+# def rabbit_get_message(channel):
 
 def close_rabbit_connection(channel):
 
