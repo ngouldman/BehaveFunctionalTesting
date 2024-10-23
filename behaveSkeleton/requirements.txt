@@ -1,2 +1,4 @@
 behave
 pika
+xmltodict
+pyhamcrest
